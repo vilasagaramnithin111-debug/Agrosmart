@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Agrosmart Auth</title>
+  <style>
+    body { font-family: Arial; background: linear-gradient(120deg,#2e7d32,#66bb6a); height:100vh; display:flex; justify-content:center; align-items:center; }
+    .box { background:white; padding:30px; border-radius:10px; width:300px; text-align:center; }
+    input, button { width:100%; padding:10px; margin:8px 0; }
+    button { background:#2e7d32; color:white; border:none; cursor:pointer; }
+    .switch { color:blue; cursor:pointer; font-size:14px; }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <h2 id="title">🌾 Signup</h2>
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="submitForm()" id="mainBtn">Create Account</button>
+  <p class="switch" onclick="toggleMode()" id="toggleText">Already have account? Login</p>
+  <p id="result"></p>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAh_U5RAoady0tC2EUrQE9531gRnxomNh4",
+  authDomain: "agro-smart-660a6.firebaseapp.com",
+  projectId: "agro-smart-660a6",
+  storageBucket: "agro-smart-660a6.appspot.com",
+  messagingSenderId: "578949679343",
+  appId: "1:578949679343:web:3b301f2544a7c339c9331a"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+let isSignup = true;
+
+window.toggleMode = function () {
+  isSignup = !isSignup;
+  document.getElementById("title").innerText = isSignup ? "🌾 Signup" : "🌾 Login";
+  document.getElementById("mainBtn").innerText = isSignup ? "Create Account" : "Login";
+  document.getElementById("toggleText").innerText = isSignup ? "Already have account? Login" : "New user? Signup";
+  document.getElementById("result").innerHTML = "";
+};
+
+window.submitForm = function () {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  if (!email || !password) { document.getElementById("result").innerHTML = "❌ Fill all fields"; return; }
+
+  if (isSignup) {
+    createUserWithEmailAndPassword(auth, email, password).then(() => success()).catch(err => showError(err));
+  } else {
+    signInWithEmailAndPassword(auth, email, password).then(() => success()).catch(err => showError(err));
+  }
+};
+
+function success() {
+  document.getElementById("result").innerHTML = "✅ Success!";
+  setTimeout(() => { window.location.href = "dashboard.html"; }, 1000);
+}
+
+function showError(error) { document.getElementById("result").innerHTML = error.message; }
+</script>
+
+</body>
+</html>
